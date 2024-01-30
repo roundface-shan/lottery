@@ -93,10 +93,22 @@ contract Raffle is VRFConsumerBaseV2 {
         emit EnteredRaffle(msg.sender);
     }
 
+    /**
+     * @dev This is the function that Chainlink Automation Node will call
+     * to see if it's time to proform the upkeep.
+     * The following should be ture for this to return ture:
+     * 1. The time interval has passed between raffle runs
+     * 2. The raffle is in the OPEN state
+     * 3. The contract has ETH (aka players)
+     * 4. (Implicit) The subscription is funded with $LINK
+     */
+    function checkUpkeep(
+        bytes memory /* checkData */
+    ) public view returns (bool upkeepNeeded, bytes memory /* proformData */) {
+        bool timeHasPassed = (block.timestamp - s_lastTimeStamp) >= i_interval;
+    }
+
     function pickWinner() external {
-        if ((block.timestamp - s_lastTimeStamp) < i_interval) {
-            revert();
-        }
         s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane, // kay hash
@@ -111,6 +123,8 @@ contract Raffle is VRFConsumerBaseV2 {
         uint256 requestId,
         uint256[] memory randomness
     ) internal override {
+        // check first
+        // change ourown parameter's state (within this contract)
         uint256 indexOfWinner = randomness[0] % s_players.length;
         address payable winner = s_players[indexOfWinner];
         s_recentWinner = winner;
@@ -118,12 +132,13 @@ contract Raffle is VRFConsumerBaseV2 {
 
         s_players = new address payable[](0);
         s_lastTimeStamp = block.timestamp;
-
+        emit PickedWinner(winner);
+        // do the interaction (with other contracts)
         (bool success, ) = winner.call{value: address(this).balance}("");
         if (!success) {
             revert Raffle__TransferFailed();
         }
-        emit PickedWinner(winner);
+        // 有些人喜欢把emit加到这里，但最好不要，你不需要知道为什么
     }
 
     /** Getter Functions */
