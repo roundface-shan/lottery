@@ -18,6 +18,10 @@ contract DepolyRaffle is Script {
             uint32 callbackGasLimit
         ) = helperConfig.activeNetworkConfig();
 
+        if (subscriptionId == 0) {
+            // 添加订阅ID
+        }
+
         vm.startBroadcast();
         Raffle raffle = new Raffle(
             entranceFee,
