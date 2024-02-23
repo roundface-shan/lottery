@@ -5,7 +5,7 @@ pragma solidity ^0.8.18;
 import {Script} from "forge-std/Script.sol";
 import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
-import {CreateSubscription} from "./Interactions.s.sol";
+import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 contract DepolyRaffle is Script {
     function run() external returns (Raffle, HelperConfig) {
@@ -20,11 +20,19 @@ contract DepolyRaffle is Script {
             address link
         ) = helperConfig.activeNetworkConfig();
 
+        // 所有这些都是为了让单元测试能自动通过
         if (subscriptionId == 0) {
             // 添加订阅ID
             CreateSubscription createSubscription = new CreateSubscription();
             subscriptionId = createSubscription.createSubscription(
                 vrfCoordinator
+            );
+            // 往订阅里打钱
+            FundSubscription fundSubscription = new FundSubscription();
+            fundSubscription.fundSubscription(
+                vrfCoordinator,
+                subscriptionId,
+                link
             );
         }
 
@@ -38,6 +46,14 @@ contract DepolyRaffle is Script {
             callbackGasLimit
         );
         vm.stopBroadcast();
+
+        // 把合约地址添加到订阅的配置里
+        AddConsumer addConsumer = new AddConsumer();
+        addConsumer.addConsumer(
+            address(raffle),
+            vrfCoordinator,
+            subscriptionId
+        );
         return (raffle, helperConfig);
     }
 }
