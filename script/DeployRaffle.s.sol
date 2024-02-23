@@ -20,7 +20,7 @@ contract DepolyRaffle is Script {
             address link
         ) = helperConfig.activeNetworkConfig();
 
-        // 所有这些都是为了让单元测试能自动通过
+        // 所有这些都是为了让单元测试能自动通过，一开始我只是想写个测试啊
         if (subscriptionId == 0) {
             // 添加订阅ID
             CreateSubscription createSubscription = new CreateSubscription();

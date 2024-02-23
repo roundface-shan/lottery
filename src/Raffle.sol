@@ -107,6 +107,7 @@ contract Raffle is VRFConsumerBaseV2 {
      * 3. The contract has ETH (aka players)
      * 4. (Implicit) The subscription is funded with $LINK
      */
+    // Upkeep 是 vrf 负责执行的部分，先确认拿随机数的条件，再直接用拿回来的随机数选出 winner
     function checkUpkeep(
         bytes memory /* checkData */
     ) public view returns (bool upkeepNeeded, bytes memory /* proformData */) {
