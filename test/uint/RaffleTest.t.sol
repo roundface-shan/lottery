@@ -100,4 +100,11 @@ contract RaffleTest is Test {
         assert(state == Raffle.RaffleState.CALCULATING);
         assert(!upkeepNeeded);
     }
+
+    function testCheckUpkeepReturnsFalseIfEnoughTimeHasntPassed() public {
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        assert(!upkeepNeeded);
+    }
 }
