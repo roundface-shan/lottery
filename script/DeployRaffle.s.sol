@@ -17,7 +17,8 @@ contract DepolyRaffle is Script {
             bytes32 gasLane,
             uint64 subscriptionId,
             uint32 callbackGasLimit,
-            address link
+            address link,
+            uint256 deployerKey
         ) = helperConfig.activeNetworkConfig();
 
         // 所有这些都是为了让单元测试能自动通过，一开始我只是想写个测试啊
@@ -52,7 +53,8 @@ contract DepolyRaffle is Script {
         addConsumer.addConsumer(
             address(raffle),
             vrfCoordinator,
-            subscriptionId
+            subscriptionId,
+            deployerKey
         );
         return (raffle, helperConfig);
     }
