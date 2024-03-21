@@ -123,7 +123,7 @@ contract RaffleTest is Test {
         raffle.performUpkeep("");
     }
 
-    function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public {
+    function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public skipFork {
         uint256 currentBalance = 0;
         uint256 numPlayers = 0;
         uint256 raffleState = 0;
@@ -164,11 +164,18 @@ contract RaffleTest is Test {
     }
 
     /////////////////////////
-    // fulfillRandomWords //
+    // fulfillRandomWords  //
     /////////////////////////
+    modifier skipFork() {
+        if (block.chainid != 31337) {
+            return;
+        }
+        _;
+    }
+
     function testFulfillRandomWordCanOnlyBeCalledAfterPerformUpkeep(
         uint256 randomRequestId // fuzzing test with a random request id
-    ) public raffleEnteredAndTimePassed {
+    ) public raffleEnteredAndTimePassed skipFork {
         vm.expectRevert("nonexistent request");
         VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(
             randomRequestId,
@@ -180,6 +187,7 @@ contract RaffleTest is Test {
     function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney()
         public
         raffleEnteredAndTimePassed
+        skipFork
     {
         uint256 additionalEntrants = 5;
         uint256 startingIndex = 1;

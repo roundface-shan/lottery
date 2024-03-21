@@ -26,14 +26,16 @@ contract DepolyRaffle is Script {
             // 添加订阅ID
             CreateSubscription createSubscription = new CreateSubscription();
             subscriptionId = createSubscription.createSubscription(
-                vrfCoordinator
+                vrfCoordinator,
+                deployerKey
             );
             // 往订阅里打钱
             FundSubscription fundSubscription = new FundSubscription();
             fundSubscription.fundSubscription(
                 vrfCoordinator,
                 subscriptionId,
-                link
+                link,
+                deployerKey
             );
         }
 
