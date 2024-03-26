@@ -7,7 +7,7 @@ import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
-contract DepolyRaffle is Script {
+contract DeployRaffle is Script {
     function run() external returns (Raffle, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig();
         (

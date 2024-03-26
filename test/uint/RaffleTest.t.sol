@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.19;
 
-import {DepolyRaffle} from "../../script/DeployRaffle.s.sol";
+import {DeployRaffle} from "../../script/DeployRaffle.s.sol";
 import {Raffle} from "../../src/Raffle.sol";
 import {Test, console} from "forge-std/Test.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
@@ -27,7 +27,7 @@ contract RaffleTest is Test {
     uint256 public constant STARTIG_USER_BALANCE = 10 ether;
 
     function setUp() external {
-        DepolyRaffle deployRaffle = new DepolyRaffle();
+        DeployRaffle deployRaffle = new DeployRaffle();
         (raffle, helperConfig) = deployRaffle.run();
         (
             entranceFee,
